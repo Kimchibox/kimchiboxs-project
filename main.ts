@@ -2,37 +2,30 @@ namespace SpriteKind {
     export const Bullet = SpriteKind.create()
 }
 controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
-    if (Bullet_Remain >= 1) {
-        Bullet = sprites.createProjectileFromSprite(img`
-            . . . . . . . . . . . . . . . . 
-            . . . . . . . . . . . . . . . . 
-            . . . . . . . . . . . . . . . . 
-            . . . . . . . . . . . . . . . . 
-            . . . . . . . . . 2 2 2 2 . . . 
-            . . . . . . . 2 2 1 1 1 1 2 . . 
-            . . . . 2 2 3 3 1 1 1 1 1 1 . . 
-            . . 3 3 3 3 1 1 1 1 1 1 1 1 . . 
-            . . 1 1 1 1 1 1 1 1 1 1 1 1 . . 
-            . . 3 3 2 2 3 1 1 1 1 1 1 1 . . 
-            . . . . . . 2 2 3 1 1 1 1 2 . . 
-            . . . . . . . . . 2 2 2 2 . . . 
-            . . . . . . . . . . . . . . . . 
-            . . . . . . . . . . . . . . . . 
-            . . . . . . . . . . . . . . . . 
-            . . . . . . . . . . . . . . . . 
-            `, spacePlane, 200, 0)
-        Bullet_Remain = Bullet_Remain - 1
-        spacePlane.sayText(Bullet_Remain)
-    }
-})
-sprites.onOverlap(SpriteKind.Bullet, SpriteKind.Player, function (sprite, otherSprite) {
-    sprite.destroy()
-    Bullet_Remain = Bullet_Remain + 1
-    spacePlane.sayText(Bullet_Remain)
+    Bullet = sprites.createProjectileFromSprite(img`
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . 2 2 2 2 . . . 
+        . . . . . . . 2 2 1 1 1 1 2 . . 
+        . . . . 2 2 3 3 1 1 1 1 1 1 . . 
+        . . 3 3 3 3 1 1 1 1 1 1 1 1 . . 
+        . . 1 1 1 1 1 1 1 1 1 1 1 1 . . 
+        . . 3 3 2 2 3 1 1 1 1 1 1 1 . . 
+        . . . . . . 2 2 3 1 1 1 1 2 . . 
+        . . . . . . . . . 2 2 2 2 . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        `, spacePlane, 200, 0)
 })
 sprites.onOverlap(SpriteKind.Food, SpriteKind.Player, function (sprite, otherSprite) {
     sprite.destroy()
-    info.changeLifeBy(1)
+    if (info.life() < 5) {
+        info.changeLifeBy(1)
+    }
 })
 sprites.onOverlap(SpriteKind.Enemy, SpriteKind.Player, function (sprite, otherSprite) {
     sprite.destroy()
@@ -45,14 +38,11 @@ sprites.onOverlap(SpriteKind.Projectile, SpriteKind.Enemy, function (sprite, oth
 })
 let Heal_Pack: Sprite = null
 let Bogey: Sprite = null
-let Supply_Bullet: Sprite = null
 let Bullet: Sprite = null
 let spacePlane: Sprite = null
-let Bullet_Remain = 0
 let Bogey_Regen_Speed = 1000
 let Heal_Pack_Regen_Speed = 5000
 let Supply_Bullet_Regen_Speed = 2500
-Bullet_Remain = 10
 scene.setBackgroundImage(img`
     9999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999
     9999999999999999999999999999999999999999999999999999111111111119999999999999999999999999999999999999991111999999999999999999999999999999999999999999111111111111
@@ -201,103 +191,79 @@ spacePlane,
 [img`
     . . . . . . . . . . . . . . . . 
     . . . . . f f f f f f . . . . . 
-    . . . f f e e e e f 2 f . . . . 
-    . . f f e e e e f 2 2 2 f . . . 
-    . . f e e e f f e e e e f . . . 
-    . . f f f f e e 2 2 2 2 e f . . 
-    . . f e 2 2 2 f f f f e 2 f . . 
+    . . . f f e e e e f 9 f . . . . 
+    . . f f e e e e f 9 9 9 f . . . 
+    . . f e e e f f e f 9 f f . . . 
+    . . f f f f e e 9 9 9 9 e f . . 
+    . . f e 9 9 9 f f f f e 9 f . . 
     . f f f f f f f e e e f f f . . 
     . f f e 4 4 e b f 4 4 e e f . . 
     . f e e 4 d 4 1 f d d e f . . . 
     . . f e e e e e d d d f . . . . 
-    . . . . f 4 d d e 4 e f . . . . 
-    . . . . f e d d e 2 2 f . . . . 
-    . . . f f f e e f 5 5 f f . . . 
+    . . . . f b 1 1 b 4 e f . . . . 
+    . . . . f e d d e 1 1 f . . . . 
+    . . . f f f e e f b b f f . . . 
     . . . f f f f f f f f f f . . . 
     . . . . f f . . . f f f . . . . 
     `,img`
     . . . . . f f f f f f . . . . . 
-    . . . f f e e e e f 2 f . . . . 
-    . . f f e e e e f 2 2 2 f . . . 
-    . . f e e e f f e e e e f . . . 
-    . . f f f f e e 2 2 2 2 e f . . 
-    . . f e 2 2 2 f f f f e 2 f . . 
+    . . . f f e e e e f 9 f . . . . 
+    . . f f e e e e f 9 9 9 f . . . 
+    . . f e e e f f e f 9 f f . . . 
+    . . f f f f e e 9 9 9 9 e f . . 
+    . . f e 9 9 9 f f f f e 9 f . . 
     . f f f f f f f e e e f f f . . 
     . f f e 4 4 e b f 4 4 e e f . . 
     . f e e 4 d 4 1 f d d e f f . . 
     . . f e e e 4 d d d d f d d f . 
     . . . f f e e 4 e e e f b b f . 
-    . . . . f 2 2 2 4 d d e b b f . 
-    . . . . e 2 2 2 e d d e b f . . 
-    . . . . f 4 4 4 f e e f f . . . 
+    . . . . f 1 1 1 4 d d e b b f . 
+    . . . . e 1 1 1 e d d e b f . . 
+    . . . . f b b b f e e f f . . . 
     . . . . . f f f f f f . . . . . 
     . . . . . . f f f . . . . . . . 
     `,img`
     . . . . . . . . . . . . . . . . 
     . . . . . f f f f f f . . . . . 
-    . . . f f e e e e f 2 f . . . . 
-    . . f f e e e e f 2 2 2 f . . . 
-    . . f e e e f f e e e e f . . . 
-    . . f f f f e e 2 2 2 2 e f . . 
-    . . f e 2 2 2 f f f f e 2 f . . 
+    . . . f f e e e e f 9 f . . . . 
+    . . f f e e e e f 9 9 9 f . . . 
+    . . f e e e f f e f 9 f f . . . 
+    . . f f f f e e 9 9 9 9 e f . . 
+    . . f e 9 9 9 f f f f e 9 f . . 
     . f f f f f f f e e e f f f . . 
     . f f e 4 4 e b f 4 4 e e f . . 
     . f e e 4 d 4 1 f d d e f . . . 
     . . f e e e e e d d d f . . . . 
-    . . . . f 4 d d e 4 e f . . . . 
-    . . . . f e d d e 2 2 f . . . . 
-    . . . f f f e e f 5 5 f f . . . 
+    . . . . f b 1 1 b 4 e f . . . . 
+    . . . . f e d d e 1 1 f . . . . 
+    . . . f f f e e f b b f f . . . 
     . . . f f f f f f f f f f . . . 
     . . . . f f . . . f f f . . . . 
     `,img`
-    . . . . . . . . . . . . . . . . 
     . . . . . f f f f f f . . . . . 
-    . . . f f e e e e f 2 f . . . . 
-    . . f f e e e e f 2 2 2 f . . . 
-    . . f e e e f f e e e e f . . . 
-    . . f f f f e e 2 2 2 2 e f . . 
-    . . f e 2 2 2 f f f f e 2 f . . 
+    . . . f f e e e e f 9 f . . . . 
+    . . f f e e e e f 9 9 9 f . . . 
+    . . f e e e f f e f 9 f f . . . 
+    . . f f f f e e 9 9 9 9 e f . . 
+    . . f e 9 9 9 f f f f e 9 f . . 
     . f f f f f f f e e e f f f . . 
     . f f e 4 4 e b f 4 4 e e f . . 
     . f e e 4 d 4 1 f d d e f f . . 
     . . f e e e 4 d d d d f d d f . 
-    . . . . f e e 4 e e e f b b f . 
-    . . . . f 2 2 2 4 d d e b b f . 
-    . . . f f 4 4 4 e d d e b f . . 
-    . . . f f f f f f e e f f . . . 
-    . . . . f f . . . f f f . . . . 
+    . . . f f e e 4 e e e f b b f . 
+    . . . . f 1 1 1 4 d d e b b f . 
+    . . . . e 1 1 1 e d d e b f . . 
+    . . . . f b b b f e e f f . . . 
+    . . . . . f f f f f f . . . . . 
+    . . . . . . f f f . . . . . . . 
     `],
 200,
 true
 )
-spacePlane.sayText(Bullet_Remain)
 scroller.scrollBackgroundWithSpeed(-50, 0, scroller.BackgroundLayer.Layer0)
 game.onUpdateInterval(5000, function () {
     Bogey_Regen_Speed += -100
     Bogey_Regen_Speed = Math.max(Bogey_Regen_Speed, 100)
-})
-game.onUpdateInterval(Supply_Bullet_Regen_Speed, function () {
-    Supply_Bullet = sprites.create(img`
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . b . . . . . . . 
-        . . . . . . . b d b . . . . . . 
-        . . . . . . . c d c . . . . . . 
-        . . . . . . . c 5 c . . . . . . 
-        . . . . . . c d 5 d c . . . . . 
-        . . . b c c d 5 5 5 d c c b . . 
-        . . b d d 5 5 5 5 5 5 5 d d b . 
-        . . . b c c d 5 5 5 d c c b . . 
-        . . . . . . c d 5 d c . . . . . 
-        . . . . . . . c 5 c . . . . . . 
-        . . . . . . . c d c . . . . . . 
-        . . . . . . . b d b . . . . . . 
-        . . . . . . . . b . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        `, SpriteKind.Bullet)
-    Supply_Bullet.setVelocity(-150, 0)
-    Supply_Bullet.setPosition(160, randint(25, 115))
-    Supply_Bullet.setFlag(SpriteFlag.AutoDestroy, true)
 })
 forever(function () {
     Bogey = sprites.create(img`
